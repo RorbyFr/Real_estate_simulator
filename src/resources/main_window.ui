@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1150</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1150</width>
+    <height>680</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>1150</width>
+     <height>680</height>
+    </size>
+   </property>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>89</y>
+      <width>1200</width>
+      <height>1431</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="home">
+     <widget class="QToolButton" name="year_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>50</y>
+        <width>250</width>
+        <height>175</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Year finder</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="house_size_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>50</y>
+        <width>250</width>
+        <height>175</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>House size finder</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="contribution_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>50</y>
+        <width>250</width>
+        <height>175</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Contribution finder</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="monthly_payment_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>275</y>
+        <width>250</width>
+        <height>175</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Monthly payment finder</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="interest_rate_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>275</y>
+        <width>250</width>
+        <height>175</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Interest rate finder</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="back_pushButton">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>15</y>
+      <width>73</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="title">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>20</y>
+      <width>950</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial Black</family>
+      <pointsize>32</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Real eastate purchase simulator</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="quit_pushButton">
+    <property name="geometry">
+     <rect>
+      <x>1085</x>
+      <y>15</y>
+      <width>50</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string notr="true"/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="settings_pushButton">
+    <property name="geometry">
+     <rect>
+      <x>1020</x>
+      <y>15</y>
+      <width>50</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

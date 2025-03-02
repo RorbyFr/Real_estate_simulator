@@ -1,0 +1,46 @@
+
+QLabel#settings_title {
+    color: #000000;
+	font-size: 30px;
+	font-weight: bold;
+}
+
+QLabel#language_label {
+    color: #000000;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+QLabel#money_label {
+    color: #000000;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+QPushButton#english_translation_pushButton {
+	background: #000000;
+}
+
+QPushButton#french_translation_pushButton {
+	background: #000000;
+}
+
+QPushButton#ok_pushButton {
+	border: 5px solid;
+	font-size: 20px;
+	font-weight: bold;
+	background: #ffffff;
+}
+
+QPushButton#ok_pushButton:hover {
+    border: 5px solid #000000;
+}
+
+QPushButton {
+	background: #87CEFA;
+	border: 2px solid #000000;
+}
+
+QPushButton:hover {
+    border: 2px solid #020afa;
+}
