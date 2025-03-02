@@ -1,3 +1,12 @@
+# Project
+COTS/
+.idea/
+src/resources/*.py
+bin/gui.build/
+bin/gui.dist/
+bin/gui.onefile-build/
+bin/real_estate_simulator.exe
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
