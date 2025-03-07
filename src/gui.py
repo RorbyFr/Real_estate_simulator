@@ -1,9 +1,11 @@
-
 from PySide6.QtWidgets import QMainWindow, QApplication
-from PySide6.QtCore import QSize, Qt, QTranslator, QLocale, Slot, QEvent
+from PySide6.QtCore import QSize, Qt, QTranslator, Slot
 from PySide6.QtGui import QIcon, QFont
 
-from resources.main_window import Ui_MainWindow
+try:
+    from resources.ui_main_window import Ui_MainWindow
+except ImportError:
+    from resources.main_window import Ui_MainWindow
 from settings_pop_up import SettingsPopUp
 from real_estate_page import YearFinderPage, HouseSizeFinderPage, ContributionFinderPage, MonthlyPaymentFinderPage, InterestRateFinderPage
 import common
@@ -11,9 +13,13 @@ import common
 import os
 import sys
 
+try:
+    import rc_resources  # noqa: F401
+except ImportError:
+    pass
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-
     # Key in buttons dictionary
     IMG_KEY = "image path"
     IDX_KEY = "index page"
@@ -30,33 +36,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
 
         self.home_buttons = {
-            self.year_toolButton: {self.IMG_KEY: "year.png", self.IDX_KEY: 1},
-            self.house_size_toolButton: {self.IMG_KEY: "house size.PNG", self.IDX_KEY: 2},
-            self.contribution_toolButton: {self.IMG_KEY: "contribution.PNG", self.IDX_KEY: 3},
-            self.monthly_payment_toolButton: {self.IMG_KEY: "monthly payment.PNG", self.IDX_KEY: 4},
-            self.interest_rate_toolButton: {self.IMG_KEY: "interest rate.PNG", self.IDX_KEY: 5},
+            self.year_toolButton: {self.IMG_KEY: ":/resources/year.png", self.IDX_KEY: 1},
+            self.house_size_toolButton: {self.IMG_KEY: ":/resources/house_size.png", self.IDX_KEY: 2},
+            self.contribution_toolButton: {self.IMG_KEY: ":/resources/contribution.png", self.IDX_KEY: 3},
+            self.monthly_payment_toolButton: {self.IMG_KEY: ":/resources/monthly_payment.png", self.IDX_KEY: 4},
+            self.interest_rate_toolButton: {self.IMG_KEY: ":/resources/interest_rate.png", self.IDX_KEY: 5},
         }
 
         # Back to main page button
-        common.load_scaled_icon_on_widget(self.back_pushButton, os.path.join(common.RESOURCES_PATH, "back.png"), text_under=False)
+        common.load_scaled_icon_on_widget(self.back_pushButton, ":/resources/back.png", text_under=False)
         self.back_pushButton.clicked.connect(lambda checked, index=0: self.go_to_page(index))
         # Qt bug need define here cursor instead of css
         self.back_pushButton.setCursor(Qt.PointingHandCursor)
 
         # Settings button
-        common.load_scaled_icon_on_widget(self.settings_pushButton, os.path.join(common.RESOURCES_PATH, "settings.png"), text_under=False)
+        common.load_scaled_icon_on_widget(self.settings_pushButton, ":/resources/settings.png", text_under=False)
         self.settings_pushButton.clicked.connect(self.open_settings)
         self.settings_pushButton.setCursor(Qt.PointingHandCursor)
 
         # Quit button
-        common.load_scaled_icon_on_widget(self.quit_pushButton, os.path.join(common.RESOURCES_PATH, "red_cross.png"), text_under=False)
+        common.load_scaled_icon_on_widget(self.quit_pushButton, ":/resources/red_cross.png", text_under=False)
         self.quit_pushButton.clicked.connect(self.quit_application)
         self.quit_pushButton.setCursor(Qt.PointingHandCursor)
 
         self.__create_home_buttons()
 
         # Apply stylesheet
-        stylesheet_path = os.path.join(common.RESOURCES_PATH, "stylesheet.css")
+        stylesheet_path = ":/resources/stylesheet.css"
         common.apply_stylesheet(self, stylesheet_path)
 
         # Innit settings pop up
@@ -94,7 +100,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Put icon on home buttons"""
         for button, data_button in self.home_buttons.items():
             # Put icon on button with text under
-            common.load_scaled_icon_on_widget(button, os.path.join(common.RESOURCES_PATH, data_button[self.IMG_KEY]), text_under=True)
+            common.load_scaled_icon_on_widget(button, data_button[self.IMG_KEY], text_under=True)
             button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             # Connect changing page
             button.clicked.connect(lambda checked, index=data_button[self.IDX_KEY]: self.go_to_page(index))
@@ -102,7 +108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             button.setCursor(Qt.PointingHandCursor)
 
     def load_scaled_icon_on_button(self, widget, img_path, text_under=True):
-        """ Load image and resize it to fit with widget
+        """Load image and resize it to fit with widget
 
         :params widget: QWidget
         :params img_path: string path of image
@@ -114,7 +120,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         coefficient_under = 1
         if text_under:
             coefficient_under = 0.70
-        width, height = self.find_optimal_icon_size(widget_width, int(widget_height*coefficient_under), icon)
+        width, height = self.find_optimal_icon_size(widget_width, int(widget_height * coefficient_under), icon)
         widget.setIcon(icon)
         widget.setIconSize(QSize(width, height))
 
@@ -130,8 +136,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         height = icon.availableSizes()[0].height()
 
         # Calcul ratio
-        width_ratio = target_width/width
-        height_ratio = target_height/height
+        width_ratio = target_width / width
+        height_ratio = target_height / height
 
         # Take minimum ratio to fit with at least on one dimension and not cross edge widget
         new_ratio = min(width_ratio, height_ratio)
@@ -166,8 +172,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.give_current_page_to_real_estate_page(index)
 
     def give_current_page_to_real_estate_page(self, index):
-        list_page = [self, self.year_finder_page, self.house_size_finder_page, self.contribution_finder_page,
-                     self.monthly_payment_finder_page, self.interest_rate_finder_page]
+        list_page = [
+            self,
+            self.year_finder_page,
+            self.house_size_finder_page,
+            self.contribution_finder_page,
+            self.monthly_payment_finder_page,
+            self.interest_rate_finder_page,
+        ]
         for page in list_page:
             page.current_page = list_page[index]
 
@@ -178,7 +190,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(str)
     def change_language(self, lang):
-        file_lang = os.path.join(common.RESOURCES_PATH, lang)
+        file_lang = f":/resources/{lang}"
         if self.translator.load(file_lang):
             QApplication.instance().installTranslator(self.translator)
             # Translate first python file generated from UI
@@ -187,8 +199,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     widget.retranslateUi(self)
             # Translate secondly manual setting text in code
             for widget in QApplication.instance().allWidgets():
-                # print(widget)
-                # print()
                 if hasattr(widget, "retranslate_page"):
                     widget.retranslate_page()
                 elif hasattr(widget, "retranslate_title"):
@@ -218,15 +228,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sys.exit()
 
 
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # translator = QTranslator()
-    # locale = QLocale.system().name()  # Ex: "fr_FR"
-    # qm_file_path = os.path.join(RESOURCES_PATH, f"{locale}.qm")
-    # if translator.load(qm_file_path):
-    #     app.installTranslator(translator)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

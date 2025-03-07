@@ -1,6 +1,9 @@
 from PySide6.QtCore import Signal, Slot, Qt
 
-from resources.settings_pop_up import Ui_Dialog
+try:
+    from resources.ui_settings_pop_up import Ui_Dialog
+except ImportError:
+    from resources.settings_pop_up import Ui_Dialog
 import common
 
 import os
@@ -17,35 +20,72 @@ class SettingsPopUp(Ui_Dialog, common.RoundedQdialog):
         self.setupUi(self)
 
         # Apply stylesheet
-        stylesheet_path = os.path.join(common.RESOURCES_PATH, "stylesheet_settings_pop_up.css")
+        stylesheet_path = ":/resources/stylesheet_settings_pop_up.css"
         common.apply_stylesheet(self, stylesheet_path)
 
         # Remove upside bar and keep pop-up and first view
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 
         # Load translation image
-        common.load_scaled_icon_on_widget(self.english_translation_pushButton,
-                                          os.path.join(common.RESOURCES_PATH, "english.png"),
-                                          text_under=False, border_width=4, border_height=4)
-        common.load_scaled_icon_on_widget(self.french_translation_pushButton,
-                                          os.path.join(common.RESOURCES_PATH, "french.png"),
-                                          text_under=False, border_width=4, border_height=4)
+        common.load_scaled_icon_on_widget(
+            self.english_translation_pushButton,
+            ":/resources/english.png",
+            text_under=False,
+            border_width=4,
+            border_height=4,
+        )
+        common.load_scaled_icon_on_widget(
+            self.french_translation_pushButton,
+            ":/resources/french.png",
+            text_under=False,
+            border_width=4,
+            border_height=4,
+        )
 
         # Load money image
         margin_border = 10
-        common.load_scaled_icon_on_widget(self.euro_pushButton, os.path.join(common.RESOURCES_PATH, "euro_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
-        common.load_scaled_icon_on_widget(self.pound_pushButton, os.path.join(common.RESOURCES_PATH, "pound_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
-        common.load_scaled_icon_on_widget(self.dollar_pushButton,
-                                          os.path.join(common.RESOURCES_PATH, "dollar_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
-        common.load_scaled_icon_on_widget(self.yen_pushButton, os.path.join(common.RESOURCES_PATH, "yen_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
-        common.load_scaled_icon_on_widget(self.rupee_pushButton, os.path.join(common.RESOURCES_PATH, "rupee_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
-        common.load_scaled_icon_on_widget(self.ruble_pushButton, os.path.join(common.RESOURCES_PATH, "ruble_money.png"),
-                                          text_under=False, border_width=margin_border, border_height=margin_border)
+        common.load_scaled_icon_on_widget(
+            self.euro_pushButton,
+            ":/resources/euro_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
+        common.load_scaled_icon_on_widget(
+            self.pound_pushButton,
+            ":/resources/pound_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
+        common.load_scaled_icon_on_widget(
+            self.dollar_pushButton,
+            ":/resources/dollar_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
+        common.load_scaled_icon_on_widget(
+            self.yen_pushButton,
+            ":/resources/yen_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
+        common.load_scaled_icon_on_widget(
+            self.rupee_pushButton,
+            ":/resources/rupee_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
+        common.load_scaled_icon_on_widget(
+            self.ruble_pushButton,
+            ":/resources/ruble_money.png",
+            text_under=False,
+            border_width=margin_border,
+            border_height=margin_border,
+        )
 
         # Apply specific style on button
         self.apply_style_button()

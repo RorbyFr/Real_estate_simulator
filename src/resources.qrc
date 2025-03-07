@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>resources/back.png</file>
+    <file>resources/contribution.png</file>
+    <file>resources/dollar_money.png</file>
+    <file>resources/en.qm</file>
+    <file>resources/english.png</file>
+    <file>resources/error.png</file>
+    <file>resources/euro_money.png</file>
+    <file>resources/fr.qm</file>
+    <file>resources/french.png</file>
+    <file>resources/house_size.png</file>
+    <file>resources/interest_rate.png</file>
+    <file>resources/monthly_payment.png</file>
+    <file>resources/pound_money.png</file>
+    <file>resources/red_cross_old.png</file>
+    <file>resources/red_cross.png</file>
+    <file>resources/ruble_money.png</file>
+    <file>resources/rupee_money.png</file>
+    <file>resources/settings.png</file>
+    <file>resources/stylesheet_error_pop_up.css</file>
+    <file>resources/stylesheet_pages.css</file>
+    <file>resources/stylesheet_settings_pop_up.css</file>
+    <file>resources/stylesheet.css</file>
+    <file>resources/year.png</file>
+    <file>resources/yen_money.png</file>
+</qresource>
+</RCC>

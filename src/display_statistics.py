@@ -3,14 +3,14 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from math import ceil
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-from PySide6.QtCore import QCoreApplication, Slot
+from PySide6.QtCore import Slot
 
 import common
 
 
 class MatplotlibWidget(QWidget):
     def __init__(self, title, xlabel, ylabel):
-        """ Initialize display statistic Widget
+        """Initialize display statistic Widget
 
         :params title: string title of graphic
         :params xlabel: string label of X axis
@@ -36,7 +36,7 @@ class MatplotlibWidget(QWidget):
         self.last_interest_payment = None
 
     def init_plot(self, title, xlabel, ylabel):
-        """ Initialize statistic display
+        """Initialize statistic display
 
         :params title: string title of graphic
         :params xlabel: string label of X axis
@@ -49,14 +49,11 @@ class MatplotlibWidget(QWidget):
 
 
 class LoanInterestCumulatedDisplay(MatplotlibWidget):
-
     def __init__(self):
-        super(LoanInterestCumulatedDisplay, self).__init__(QCoreApplication.translate("Graphic", "Cumulated expense depending on years"),
-                                                           QCoreApplication.translate("Graphic", "Years"),
-                                                           QCoreApplication.translate("Graphic", "Cumulated expense (€)"))
+        super().__init__(self.tr("Cumulated expense depending on years"), self.tr("Years"), self.tr("Cumulated expense (€)"))
 
     def display(self, year, loan_payment_cumulated, interest_payment_cumulated):
-        """ Display cumulated loan and cumulated interest
+        """Display cumulated loan and cumulated interest
 
         :params year: list of int year
         :params loan_payment_cumulated: list of float cumulated loan payment
@@ -67,11 +64,11 @@ class LoanInterestCumulatedDisplay(MatplotlibWidget):
             self.loan_line.remove()
             self.interest_line.remove()
         year_list = [i for i in range(1, ceil(year) + 1)]
-        loan_label = QCoreApplication.translate("Graphic", "cumulated loan")
-        interest_label = QCoreApplication.translate("Graphic", "cumulated interest")
+        loan_label = self.tr("cumulated loan")
+        interest_label = self.tr("cumulated interest")
         # Keep reference of line to clean
-        self.loan_line, = self.ax.plot(year_list, loan_payment_cumulated, label=loan_label, color="blue", marker="o")
-        self.interest_line, = self.ax.plot(year_list, interest_payment_cumulated, label=interest_label, color="red", marker="o")
+        (self.loan_line,) = self.ax.plot(year_list, loan_payment_cumulated, label=loan_label, color="blue", marker="o")
+        (self.interest_line,) = self.ax.plot(year_list, interest_payment_cumulated, label=interest_label, color="red", marker="o")
         self.ax.grid(True)
         self.figure.tight_layout()
         self.ax.get_legend().remove() if self.ax.get_legend() else None
@@ -86,9 +83,9 @@ class LoanInterestCumulatedDisplay(MatplotlibWidget):
         self.last_interest_payment_cumulated = interest_payment_cumulated
 
     def retranslate_graphic(self):
-        title = QCoreApplication.translate("Graphic", "Cumulated expense depending on years")
-        x = QCoreApplication.translate("Graphic", "Years")
-        y = QCoreApplication.translate("Graphic", "Cumulated expense (€)").replace("€", common.MONEY_UNIT)
+        title = self.tr("Cumulated expense depending on years")
+        x = self.tr("Years")
+        y = self.tr("Cumulated expense (€)").replace("€", common.MONEY_UNIT)
         self.init_plot(title, x, y)
         # Update legend if exist
         if self.last_year is not None:
@@ -110,14 +107,11 @@ class LoanInterestCumulatedDisplay(MatplotlibWidget):
 
 
 class LoanInterestRatioDisplay(MatplotlibWidget):
-
     def __init__(self):
-        super(LoanInterestRatioDisplay, self).__init__(QCoreApplication.translate("Graphic", "Loan/interest ratio depending on years"),
-                                                       QCoreApplication.translate("Graphic", "Years"),
-                                                       QCoreApplication.translate("Graphic", "Ratio (%)"))
+        super().__init__(self.tr("Loan/interest ratio depending on years"), self.tr("Years"), self.tr("Ratio (%)"))
 
     def display(self, year, loan_payment, interest_payment):
-        """ Display Loan and interest ratio
+        """Display Loan and interest ratio
 
         :params year: list of int year
         :params loan_payment: list of float loan payment
@@ -131,15 +125,13 @@ class LoanInterestRatioDisplay(MatplotlibWidget):
                 bar.remove()
         year_list = [i for i in range(1, ceil(year) + 1)]
         # Calcul ratio in percentage
-        loan_ratio = [loan_payment[i] / (loan_payment[i] + interest_payment[i])
-                      for i in range(len(loan_payment))]
-        interest_ratio = [interest_payment[i] / (loan_payment[i] + interest_payment[i])
-                          for i in range(len(interest_payment))]
-        loan_label = QCoreApplication.translate("Graphic", 'Loan')
-        interest_label = QCoreApplication.translate("Graphic", 'Interest')
+        loan_ratio = [loan_payment[i] / (loan_payment[i] + interest_payment[i]) for i in range(len(loan_payment))]
+        interest_ratio = [interest_payment[i] / (loan_payment[i] + interest_payment[i]) for i in range(len(interest_payment))]
+        loan_label = self.tr("Loan")
+        interest_label = self.tr("Interest")
         # Display loan/interest ratio
-        self.bar_loan = self.ax.bar(year_list, loan_ratio, label=loan_label, color='skyblue')
-        self.bar_interest = self.ax.bar(year_list, interest_ratio, bottom=loan_ratio, label=interest_label, color='lightcoral')
+        self.bar_loan = self.ax.bar(year_list, loan_ratio, label=loan_label, color="skyblue")
+        self.bar_interest = self.ax.bar(year_list, interest_ratio, bottom=loan_ratio, label=interest_label, color="lightcoral")
         self.ax.set_xticks(year_list)
         self.figure.tight_layout()
         self.ax.get_legend().remove() if self.ax.get_legend() else None
@@ -153,9 +145,9 @@ class LoanInterestRatioDisplay(MatplotlibWidget):
         self.last_interest_payment = interest_payment
 
     def retranslate_graphic(self):
-        title = QCoreApplication.translate("Graphic", "Loan/interest ratio depending on years")
-        x = QCoreApplication.translate("Graphic", "Years")
-        y = QCoreApplication.translate("Graphic", "Ratio (%)")
+        title = self.tr("Loan/interest ratio depending on years")
+        x = self.tr("Years")
+        y = self.tr("Ratio (%)")
         self.init_plot(title, x, y)
         # Update legend if exist
         if self.last_year is not None:

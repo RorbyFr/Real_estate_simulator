@@ -1,7 +1,10 @@
 from PySide6.QtCore import QThread, Slot, QCoreApplication
 from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox, QApplication
 
-from resources.real_estate_finder import Ui_Form
+try:
+    from resources.ui_real_estate_finder import Ui_Form
+except ImportError:
+    from resources.real_estate_finder import Ui_Form
 from simulator_interface import SimulatorInterface
 from error_pop_up import ErrorPopUp
 from display_statistics import LoanInterestRatioDisplay, LoanInterestCumulatedDisplay
@@ -12,9 +15,17 @@ from functools import wraps
 
 
 class RealEstatePage(QWidget, Ui_Form):
-
-    def __init__(self, input_label_1, input_label_2, input_label_3, input_label_4, input_label_5,
-                 calcul_button, output_label, widget_name):
+    def __init__(
+        self,
+        input_label_1,
+        input_label_2,
+        input_label_3,
+        input_label_4,
+        input_label_5,
+        calcul_button,
+        output_label,
+        widget_name,
+    ):
         super(RealEstatePage, self).__init__()
 
         # Current page of gui
@@ -30,7 +41,8 @@ class RealEstatePage(QWidget, Ui_Form):
         self.setupUi(self)
 
         # Apply stylesheet
-        stylesheet_path = os.path.join(common.RESOURCES_PATH, "stylesheet_pages.css")
+        # stylesheet_path = os.path.join(common.RESOURCES_PATH, "stylesheet_pages.css")
+        stylesheet_path = ":/resources/stylesheet_pages.css"
         common.apply_stylesheet(self, stylesheet_path)
 
         # Update input label
@@ -39,7 +51,7 @@ class RealEstatePage(QWidget, Ui_Form):
         self.label_input_3.setText(input_label_3)
         self.label_input_4.setText(input_label_4)
         self.label_input_5.setText(input_label_5)
-        self.label_combo_box.setText(QCoreApplication.translate("Real estate page", "Notary rate interest:"))
+        self.label_combo_box.setText(self.tr("Notary rate interest:"))
         # Update Calcul button
         self.simulation_pushButton.setText(calcul_button)
         # Update output label
@@ -48,11 +60,9 @@ class RealEstatePage(QWidget, Ui_Form):
         self.setObjectName(widget_name)
         # Create display statistic widget
         self.loan_interest_cumulated = LoanInterestCumulatedDisplay()
-        self.statistics_tabWidget.addTab(self.loan_interest_cumulated,
-                                         QCoreApplication.translate("Graphic", "Cumulated loan and interest"))
+        self.statistics_tabWidget.addTab(self.loan_interest_cumulated, self.tr("Cumulated loan and interest"))
         self.loan_interest_ratio = LoanInterestRatioDisplay()
-        self.statistics_tabWidget.addTab(self.loan_interest_ratio,
-                                         QCoreApplication.translate("Graphic", "Loan and interest ratio"))
+        self.statistics_tabWidget.addTab(self.loan_interest_ratio, self.tr("Loan and interest ratio"))
 
         # Innit error pop up
         self.error_pop_up = ErrorPopUp()
@@ -84,8 +94,7 @@ class RealEstatePage(QWidget, Ui_Form):
         self.lineEdit_input_3.returnPressed.connect(self.__give_focus_to_next_input)
         self.lineEdit_input_4.returnPressed.connect(self.__give_focus_to_next_input)
 
-    def retranslate(self, input_label_1, input_label_2, input_label_3, input_label_4, input_label_5,
-                    calcul_button, output_label):
+    def retranslate(self, input_label_1, input_label_2, input_label_3, input_label_4, input_label_5, calcul_button, output_label):
         # Input line edit
         self.label_input_1.setText(input_label_1)
         self.label_input_2.setText(input_label_2)
@@ -93,19 +102,17 @@ class RealEstatePage(QWidget, Ui_Form):
         self.label_input_4.setText(input_label_4)
         self.label_input_5.setText(input_label_5)
         # Notary interest combo box
-        self.label_combo_box.setText(QCoreApplication.translate("Real estate page", "Notary rate interest:"))
+        self.label_combo_box.setText(self.tr("Notary rate interest:"))
         # Calcul button
         self.simulation_pushButton.setText(calcul_button)
         # Cumulated loan
         if self.output_cumulated_loan is not None:
-            self.label_cumulated_loan.setText(QCoreApplication.translate("Real estate page", "Loan = {} €")
-                                              .format(self.output_cumulated_loan)
-                                              .replace("€", common.MONEY_UNIT))
+            self.label_cumulated_loan.setText(self.tr("Loan = {} €").format(self.output_cumulated_loan).replace("€", common.MONEY_UNIT))
         # Cumulated interest
         if self.output_cumulated_interest is not None:
-            self.label_cumulated_interest.setText(QCoreApplication.translate("Real estate page", "Cumulated interest = {} €")
-                                                  .format(self.output_cumulated_interest)
-                                                  .replace("€", common.MONEY_UNIT))
+            self.label_cumulated_interest.setText(
+                self.tr("Cumulated interest = {} €").format(self.output_cumulated_interest).replace("€", common.MONEY_UNIT)
+            )
         # Result in output label
         if self.output_result is not None:
             self.label_output.setText(self.output_text.format(result=self.output_result))
@@ -120,8 +127,8 @@ class RealEstatePage(QWidget, Ui_Form):
             self.error_pop_up.error_label.setText(error)
 
         # Update tabwidget graphic names
-        self.statistics_tabWidget.setTabText(0, QCoreApplication.translate("Graphic", "Cumulated loan and interest"))
-        self.statistics_tabWidget.setTabText(1, QCoreApplication.translate("Graphic", "Loan and interest ratio"))
+        self.statistics_tabWidget.setTabText(0, self.tr("Cumulated loan and interest"))
+        self.statistics_tabWidget.setTabText(1, self.tr("Loan and interest ratio"))
 
         # Update simulators models
         self.simulator.sig_refresh_model.emit()
@@ -135,7 +142,9 @@ class RealEstatePage(QWidget, Ui_Form):
             except Exception:
                 self.simulator.sig_last_error_changed.emit(self.simulator.INPUT_ERROR)
                 self.simulator.sig_parameter_error.emit(
-                    QCoreApplication.translate("Error pop-up", "Error in input parameter detected, please check your values"))
+                    QCoreApplication.translate("Error pop-up", "Error in input parameter detected, please check your values")
+                )
+
         return wrapper
 
     @Slot()
@@ -149,8 +158,7 @@ class RealEstatePage(QWidget, Ui_Form):
         self.output_result = text
 
     @Slot(float, list, list, list, list)
-    def _display_statistics(self, year, loan_payment, interest_payment,
-                            cumulated_loan_payment, cumulated_interest_payment):
+    def _display_statistics(self, year, loan_payment, interest_payment, cumulated_loan_payment, cumulated_interest_payment):
         # Update statistics graphics
         self.loan_interest_cumulated.display(year, cumulated_loan_payment, cumulated_interest_payment)
         self.loan_interest_ratio.display(year, loan_payment, interest_payment)
@@ -158,12 +166,10 @@ class RealEstatePage(QWidget, Ui_Form):
         self.output_cumulated_loan = round(cumulated_loan_payment[-1], 2)
         self.output_cumulated_interest = round(cumulated_interest_payment[-1], 2)
         # Update loan and cumulated interest label
-        self.label_cumulated_loan.setText(
-            QCoreApplication.translate("Real estate page", "Loan = {} €").format(self.output_cumulated_loan)
-            .replace("€", common.MONEY_UNIT))
+        self.label_cumulated_loan.setText(self.tr("Loan = {} €").format(self.output_cumulated_loan).replace("€", common.MONEY_UNIT))
         self.label_cumulated_interest.setText(
-            QCoreApplication.translate("Real estate page", "Cumulated interest = {} €").format(self.output_cumulated_interest)
-            .replace("€", common.MONEY_UNIT))
+            self.tr("Cumulated interest = {} €").format(self.output_cumulated_interest).replace("€", common.MONEY_UNIT)
+        )
 
     def __get_rate_notary(self):
         # Old house
@@ -185,7 +191,7 @@ class RealEstatePage(QWidget, Ui_Form):
 
     @Slot()
     def __give_focus_to_next_input(self):
-        """ Give focus to next QLineEdit when Enter key is pressed"""
+        """Give focus to next QLineEdit when Enter key is pressed"""
         focused_widget = QApplication.focusWidget()
         current_input = focused_widget.objectName()
         next_input = current_input[:-1] + str(int(current_input[-1]) + 1)
@@ -205,60 +211,63 @@ class RealEstatePage(QWidget, Ui_Form):
 
 
 class YearFinderPage(RealEstatePage):
-
     def __init__(self):
-        super(YearFinderPage, self).__init__(input_label_1=QCoreApplication.translate("Real estate page", "House size (m²)"),
-                                             input_label_2=QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)"),
-                                             input_label_3=QCoreApplication.translate("Real estate page", "Contribution (€)"),
-                                             input_label_4=QCoreApplication.translate("Real estate page", "Monthly payment (€/month)"),
-                                             input_label_5=QCoreApplication.translate("Real estate page", "Interest rate (%)"),
-                                             calcul_button=QCoreApplication.translate("Real estate page", "Calcul years"),
-                                             output_label=QCoreApplication.translate("Real estate page", "Years of loan ="),
-                                             widget_name="year_finder")
+        super(YearFinderPage, self).__init__(
+            input_label_1=self.tr("House size (m²)"),
+            input_label_2=self.tr("Surface rate price (€/m²)"),
+            input_label_3=self.tr("Contribution (€)"),
+            input_label_4=self.tr("Monthly payment (€/month)"),
+            input_label_5=self.tr("Interest rate (%)"),
+            calcul_button=self.tr("Calcul years"),
+            output_label=self.tr("Years of loan ="),
+            widget_name="year_finder",
+        )
 
-        self.output_text = QCoreApplication.translate("Real estate page", "Years of loan = {result}")
+        self.output_text = self.tr("Years of loan = {result}")
 
     @Slot()
     @RealEstatePage.launch_simulation_security
     def launch_simulation(self):
         # Loan = Surface * surface_rate * (1 + notary_rate) - contribution
-        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2)\
-               * (1 + self._get_value_input(self.notary_rate_comboBox)) - self._get_value_input(self.lineEdit_input_3)
+        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2) * (
+            1 + self._get_value_input(self.notary_rate_comboBox)
+        ) - self._get_value_input(self.lineEdit_input_3)
         interest_rate = self._get_value_input(self.lineEdit_input_5) / 100
         annual_payment = 12 * self._get_value_input(self.lineEdit_input_4)
 
         self.simulator.sig_launch_simulation.emit("year", [loan, interest_rate, annual_payment])
 
     def retranslate_page(self):
-        input_1 = QCoreApplication.translate("Real estate page", "House size (m²)")
-        input_2 = QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
-        input_3 = QCoreApplication.translate("Real estate page", "Contribution (€)").replace("€", common.MONEY_UNIT)
-        input_4 = QCoreApplication.translate("Real estate page", "Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
-        input_5 = QCoreApplication.translate("Real estate page", "Interest rate (%)")
-        calcul_button = QCoreApplication.translate("Real estate page", "Calcul years")
-        output_label = QCoreApplication.translate("Real estate page", "Years of loan =")
-        self.output_text = QCoreApplication.translate("Real estate page", "Years of loan = {result}")
+        input_1 = self.tr("House size (m²)")
+        input_2 = self.tr("Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
+        input_3 = self.tr("Contribution (€)").replace("€", common.MONEY_UNIT)
+        input_4 = self.tr("Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
+        input_5 = self.tr("Interest rate (%)")
+        calcul_button = self.tr("Calcul years")
+        output_label = self.tr("Years of loan =")
+        self.output_text = self.tr("Years of loan = {result}")
         self.output_result = self.simulator.get_translate_year()
 
         self.retranslate(input_1, input_2, input_3, input_4, input_5, calcul_button, output_label)
 
     @staticmethod
     def get_init_output_label():
-        return QCoreApplication.translate("Real estate page", "Years of loan =")
+        return QApplication.translate("Real_estate_page", "Years of loan =")
 
 
 class HouseSizeFinderPage(RealEstatePage):
-
     def __init__(self):
-        super(HouseSizeFinderPage, self).__init__(input_label_1=QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)"),
-                                                  input_label_2=QCoreApplication.translate("Real estate page", "Contribution (€)"),
-                                                  input_label_3=QCoreApplication.translate("Real estate page", "Monthly payment (€/month)"),
-                                                  input_label_4=QCoreApplication.translate("Real estate page", "Interest rate (%)"),
-                                                  input_label_5=QCoreApplication.translate("Real estate page", "Years of loan"),
-                                                  calcul_button=QCoreApplication.translate("Real estate page", "Calcul house size"),
-                                                  output_label=QCoreApplication.translate("Real estate page", "House size ="),
-                                                  widget_name="house_size_finder")
-        self.output_text = QCoreApplication.translate("Real estate page", "House size = {result} m²")
+        super(HouseSizeFinderPage, self).__init__(
+            input_label_1=self.tr("Surface rate price (€/m²)"),
+            input_label_2=self.tr("Contribution (€)"),
+            input_label_3=self.tr("Monthly payment (€/month)"),
+            input_label_4=self.tr("Interest rate (%)"),
+            input_label_5=self.tr("Years of loan"),
+            calcul_button=self.tr("Calcul house size"),
+            output_label=self.tr("House size ="),
+            widget_name="house_size_finder",
+        )
+        self.output_text = self.tr("House size = {result} m²")
 
     @Slot()
     @RealEstatePage.launch_simulation_security
@@ -270,145 +279,150 @@ class HouseSizeFinderPage(RealEstatePage):
         interest_rate = self._get_value_input(self.lineEdit_input_4) / 100
         target_years = self._get_value_input(self.lineEdit_input_5)
 
-        self.simulator.sig_launch_simulation.emit("house size", [surface_rate_price, notary_rate, contribution,
-                                                                 annual_payment, interest_rate, target_years])
+        self.simulator.sig_launch_simulation.emit(
+            "house size", [surface_rate_price, notary_rate, contribution, annual_payment, interest_rate, target_years]
+        )
 
     def retranslate_page(self):
-        input_1 = QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
-        input_2 = QCoreApplication.translate("Real estate page", "Contribution (€)").replace("€", common.MONEY_UNIT)
-        input_3 = QCoreApplication.translate("Real estate page", "Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
-        input_4 = QCoreApplication.translate("Real estate page", "Interest rate (%)")
-        input_5 = QCoreApplication.translate("Real estate page", "Years of loan")
-        calcul_button = QCoreApplication.translate("Real estate page", "Calcul house size")
-        output_label = QCoreApplication.translate("Real estate page", "House size =")
-        self.output_text = QCoreApplication.translate("Real estate page", "House size = {result} m²")
+        input_1 = self.tr("Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
+        input_2 = self.tr("Contribution (€)").replace("€", common.MONEY_UNIT)
+        input_3 = self.tr("Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
+        input_4 = self.tr("Interest rate (%)")
+        input_5 = self.tr("Years of loan")
+        calcul_button = self.tr("Calcul house size")
+        output_label = self.tr("House size =")
+        self.output_text = self.tr("House size = {result} m²")
 
         self.retranslate(input_1, input_2, input_3, input_4, input_5, calcul_button, output_label)
 
     @staticmethod
     def get_init_output_label():
-        return QCoreApplication.translate("Real estate page", "House size =")
+        return QApplication.translate("Real_estate_page", "House size =")
 
 
 class ContributionFinderPage(RealEstatePage):
-
     def __init__(self):
-        super(ContributionFinderPage, self).__init__(input_label_1=QCoreApplication.translate("Real estate page", "House size (m²)"),
-                                                     input_label_2=QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)"),
-                                                     input_label_3=QCoreApplication.translate("Real estate page", "Monthly payment (€/month)"),
-                                                     input_label_4=QCoreApplication.translate("Real estate page", "Interest rate (%)"),
-                                                     input_label_5=QCoreApplication.translate("Real estate page", "Years of loan"),
-                                                     calcul_button=QCoreApplication.translate("Real estate page", "Calcul contribution"),
-                                                     output_label=QCoreApplication.translate("Real estate page", "Contribution ="),
-                                                     widget_name="contribution_finder")
-        self.output_text = QCoreApplication.translate("Real estate page", "Contribution = {result} €")
+        super(ContributionFinderPage, self).__init__(
+            input_label_1=self.tr("House size (m²)"),
+            input_label_2=self.tr("Surface rate price (€/m²)"),
+            input_label_3=self.tr("Monthly payment (€/month)"),
+            input_label_4=self.tr("Interest rate (%)"),
+            input_label_5=self.tr("Years of loan"),
+            calcul_button=self.tr("Calcul contribution"),
+            output_label=self.tr("Contribution ="),
+            widget_name="contribution_finder",
+        )
+        self.output_text = self.tr("Contribution = {result} €")
 
     @Slot()
     @RealEstatePage.launch_simulation_security
     def launch_simulation(self):
-        house_price = self._get_value_input(self.lineEdit_input_1)*self._get_value_input(self.lineEdit_input_2)
+        house_price = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2)
         notary_rate = self._get_value_input(self.notary_rate_comboBox)
         annual_payment = 12 * self._get_value_input(self.lineEdit_input_3)
         interest_rate = self._get_value_input(self.lineEdit_input_4) / 100
         target_years = self._get_value_input(self.lineEdit_input_5)
 
-        self.simulator.sig_launch_simulation.emit("contribution", [house_price, notary_rate, annual_payment,
-                                                                   interest_rate, target_years])
+        self.simulator.sig_launch_simulation.emit("contribution", [house_price, notary_rate, annual_payment, interest_rate, target_years])
 
     def retranslate_page(self):
-        input_1 = QCoreApplication.translate("Real estate page", "House size (m²)")
-        input_2 = QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
-        input_3 = QCoreApplication.translate("Real estate page", "Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
-        input_4 = QCoreApplication.translate("Real estate page", "Interest rate (%)")
-        input_5 = QCoreApplication.translate("Real estate page", "Years of loan")
-        calcul_button = QCoreApplication.translate("Real estate page", "Calcul contribution")
-        output_label = QCoreApplication.translate("Real estate page", "Contribution =")
-        self.output_text = QCoreApplication.translate("Real estate page", "Contribution = {result} €").replace("€", common.MONEY_UNIT)
+        input_1 = self.tr("House size (m²)")
+        input_2 = self.tr("Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
+        input_3 = self.tr("Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
+        input_4 = self.tr("Interest rate (%)")
+        input_5 = self.tr("Years of loan")
+        calcul_button = self.tr("Calcul contribution")
+        output_label = self.tr("Contribution =")
+        self.output_text = self.tr("Contribution = {result} €").replace("€", common.MONEY_UNIT)
 
         self.retranslate(input_1, input_2, input_3, input_4, input_5, calcul_button, output_label)
 
     @staticmethod
     def get_init_output_label():
-        return QCoreApplication.translate("Real estate page", "Contribution =")
+        return QApplication.translate("Real_estate_page", "Contribution =")
 
 
 class MonthlyPaymentFinderPage(RealEstatePage):
-
     def __init__(self):
-        super(MonthlyPaymentFinderPage, self).__init__(input_label_1=QCoreApplication.translate("Real estate page", "House size (m²)"),
-                                                       input_label_2=QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)"),
-                                                       input_label_3=QCoreApplication.translate("Real estate page", "Contribution (€)"),
-                                                       input_label_4=QCoreApplication.translate("Real estate page", "Interest rate (%)"),
-                                                       input_label_5=QCoreApplication.translate("Real estate page", "Years of loan"),
-                                                       calcul_button=QCoreApplication.translate("Real estate page", "Calcul monthly payment"),
-                                                       output_label=QCoreApplication.translate("Real estate page", "Monthly payment ="),
-                                                       widget_name="monthly_payment_finder")
-        self.output_text = QCoreApplication.translate("Real estate page", "Monthly payment = {result} €/month")
+        super(MonthlyPaymentFinderPage, self).__init__(
+            input_label_1=self.tr("House size (m²)"),
+            input_label_2=self.tr("Surface rate price (€/m²)"),
+            input_label_3=self.tr("Contribution (€)"),
+            input_label_4=self.tr("Interest rate (%)"),
+            input_label_5=self.tr("Years of loan"),
+            calcul_button=self.tr("Calcul monthly payment"),
+            output_label=self.tr("Monthly payment ="),
+            widget_name="monthly_payment_finder",
+        )
+        self.output_text = self.tr("Monthly payment = {result} €/month")
 
     @Slot()
     @RealEstatePage.launch_simulation_security
     def launch_simulation(self):
         # Loan = Surface * surface_rate * (1 + notary_rate) - contribution
-        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2) \
-               * (1 + self._get_value_input(self.notary_rate_comboBox)) - self._get_value_input(self.lineEdit_input_3)
+        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2) * (
+            1 + self._get_value_input(self.notary_rate_comboBox)
+        ) - self._get_value_input(self.lineEdit_input_3)
         interest_rate = self._get_value_input(self.lineEdit_input_4) / 100
         target_years = self._get_value_input(self.lineEdit_input_5)
 
         self.simulator.sig_launch_simulation.emit("monthly payment", [loan, interest_rate, target_years])
 
     def retranslate_page(self):
-        input_1 = QCoreApplication.translate("Real estate page", "House size (m²)")
-        input_2 = QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
-        input_3 = QCoreApplication.translate("Real estate page", "Contribution (€)").replace("€", common.MONEY_UNIT)
-        input_4 = QCoreApplication.translate("Real estate page", "Interest rate (%)")
-        input_5 = QCoreApplication.translate("Real estate page", "Years of loan")
-        calcul_button = QCoreApplication.translate("Real estate page", "Calcul monthly payment")
-        output_label = QCoreApplication.translate("Real estate page", "Monthly payment =")
-        self.output_text = QCoreApplication.translate("Real estate page", "Monthly payment = {result} €/month").replace("€", common.MONEY_UNIT)
+        input_1 = self.tr("House size (m²)")
+        input_2 = self.tr("Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
+        input_3 = self.tr("Contribution (€)").replace("€", common.MONEY_UNIT)
+        input_4 = self.tr("Interest rate (%)")
+        input_5 = self.tr("Years of loan")
+        calcul_button = self.tr("Calcul monthly payment")
+        output_label = self.tr("Monthly payment =")
+        self.output_text = self.tr("Monthly payment = {result} €/month").replace("€", common.MONEY_UNIT)
 
         self.retranslate(input_1, input_2, input_3, input_4, input_5, calcul_button, output_label)
 
     @staticmethod
     def get_init_output_label():
-        return QCoreApplication.translate("Real estate page", "Monthly payment =")
+        return QApplication.translate("Real_estate_page", "Monthly payment =")
 
 
 class InterestRateFinderPage(RealEstatePage):
-
     def __init__(self):
-        super(InterestRateFinderPage, self).__init__(input_label_1=QCoreApplication.translate("Real estate page", "House size (m²)"),
-                                                     input_label_2=QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)"),
-                                                     input_label_3=QCoreApplication.translate("Real estate page", "Contribution (€)"),
-                                                     input_label_4=QCoreApplication.translate("Real estate page", "Monthly payment (€/month)"),
-                                                     input_label_5=QCoreApplication.translate("Real estate page", "Years of loan"),
-                                                     calcul_button=QCoreApplication.translate("Real estate page", "Calcul interest rate"),
-                                                     output_label=QCoreApplication.translate("Real estate page", "Interest rate ="),
-                                                     widget_name="interest_rate_finder")
-        self.output_text = QCoreApplication.translate("Real estate page", "Interest rate = {result} %")
+        super(InterestRateFinderPage, self).__init__(
+            input_label_1=self.tr("House size (m²)"),
+            input_label_2=self.tr("Surface rate price (€/m²)"),
+            input_label_3=self.tr("Contribution (€)"),
+            input_label_4=self.tr("Monthly payment (€/month)"),
+            input_label_5=self.tr("Years of loan"),
+            calcul_button=self.tr("Calcul interest rate"),
+            output_label=self.tr("Interest rate ="),
+            widget_name="interest_rate_finder",
+        )
+        self.output_text = self.tr("Interest rate = {result} %")
 
     @Slot()
     @RealEstatePage.launch_simulation_security
     def launch_simulation(self):
         # Loan = Surface * surface_rate * (1 + notary_rate) - contribution
-        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2) \
-               * (1 + self._get_value_input(self.notary_rate_comboBox)) - self._get_value_input(self.lineEdit_input_3)
+        loan = self._get_value_input(self.lineEdit_input_1) * self._get_value_input(self.lineEdit_input_2) * (
+            1 + self._get_value_input(self.notary_rate_comboBox)
+        ) - self._get_value_input(self.lineEdit_input_3)
         annual_payment = 12 * self._get_value_input(self.lineEdit_input_4)
         target_years = self._get_value_input(self.lineEdit_input_5)
 
         self.simulator.sig_launch_simulation.emit("interest rate", [loan, annual_payment, target_years])
 
     def retranslate_page(self):
-        input_1 = QCoreApplication.translate("Real estate page", "House size (m²)")
-        input_2 = QCoreApplication.translate("Real estate page", "Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
-        input_3 = QCoreApplication.translate("Real estate page", "Contribution (€)").replace("€", common.MONEY_UNIT)
-        input_4 = QCoreApplication.translate("Real estate page", "Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
-        input_5 = QCoreApplication.translate("Real estate page", "Years of loan")
-        calcul_button = QCoreApplication.translate("Real estate page", "Calcul interest rate")
-        output_label = QCoreApplication.translate("Real estate page", "Interest rate =")
-        self.output_text = QCoreApplication.translate("Real estate page", "Interest rate = {result} %")
+        input_1 = self.tr("House size (m²)")
+        input_2 = self.tr("Surface rate price (€/m²)").replace("€", common.MONEY_UNIT)
+        input_3 = self.tr("Contribution (€)").replace("€", common.MONEY_UNIT)
+        input_4 = self.tr("Monthly payment (€/month)").replace("€", common.MONEY_UNIT)
+        input_5 = self.tr("Years of loan")
+        calcul_button = self.tr("Calcul interest rate")
+        output_label = self.tr("Interest rate =")
+        self.output_text = self.tr("Interest rate = {result} %")
 
         self.retranslate(input_1, input_2, input_3, input_4, input_5, calcul_button, output_label)
 
     @staticmethod
     def get_init_output_label():
-        return QCoreApplication.translate("Real estate page", "Interest rate =")
+        return QApplication.translate("Real_estate_page", "Interest rate =")
