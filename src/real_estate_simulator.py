@@ -5,16 +5,6 @@ from matplotlib import pyplot as plt
 from math import ceil
 from functools import wraps
 
-import os
-
-# # Maximum house size of model in m²
-# os.environ["MAX HOUSE SIZE"] = "1000"
-# # Maximum contribution of model in €
-# os.environ["MAX CONTRIBUTION"] = "1000000"
-# # Maximum monthly payment in €/month
-# os.environ["MAX MONTHLY PAYMENT"] = "120000"
-# # Maximum interest rate
-# os.environ["MAX INTEREST RATE"] = "0.1"
 
 # Maximum house size of model in m²
 MAX_HOUSE_SIZE = 1000
@@ -175,7 +165,6 @@ class RealEstatePurchaseSimulator:
             return wrapper
         return actual_decorator
 
-    # @newton_model(max_value=int(os.environ["MAX HOUSE SIZE"]))
     @newton_model(max_value=MAX_HOUSE_SIZE)
     def find_house_size(self, surface_rate_price, notary_rate, contribution, annual_payment, interest_rate,
                         target_years, right_value, left_value):
@@ -200,7 +189,6 @@ class RealEstatePurchaseSimulator:
                                                                    target_year=target_years)
         return current_surface, left_value
 
-    # @newton_model(max_value=int(os.environ["MAX CONTRIBUTION"]))
     @newton_model(max_value=MAX_CONTRIBUTION)
     def find_contribution(self, house_price, notary_rate, annual_payment, interest_rate, target_years,
                           right_value, left_value):
@@ -334,84 +322,87 @@ if __name__ == "__main__":
     # Years of loan
     LOAN_YEARS = 11.9
 
+    # Mode can be "Loan duration", "Surface", "Contribution", "Monthly payment", "Interest rate"
+    MODE = "Loan duration"
 
-    # Mode
-    MODE = 5
+    match MODE:
+        case "Loan duration":
+            print(f"House price is {monetary_value(HOUSE_PRICE)}€")
+            print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
+            print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
+            print(f"Loan is {monetary_value(LOAN)}€")
+            print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
+            print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
 
+            simulation = RealEstatePurchaseSimulator()
+            simulation.find_years(LOAN, INTEREST_RATE, ANNUAL_PAYMENT)
+            print(f"\nYear loan = {round(simulation.year, 1)}")
+            print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
+            simulation.display_loan_interest_statistic()
+        case "Surface":
+            print(f"Surface rate price is {monetary_value(SURFACE_RATE_PRICE)}€/m²")
+            print(f"Contribution is {CONTRIBUTION}€")
+            print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
+            print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
+            print(f"Years of loan is {LOAN_YEARS}")
 
-    if MODE == 1:
-        print(f"House price is {monetary_value(HOUSE_PRICE)}€")
-        print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
-        print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
-        print(f"Loan is {monetary_value(LOAN)}€")
-        print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
-        print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
+            simulation = RealEstatePurchaseSimulator()
+            simulation.find_house_size(SURFACE_RATE_PRICE, NOTARY_COST_RATE, CONTRIBUTION,
+                                       ANNUAL_PAYMENT, INTEREST_RATE, LOAN_YEARS)
 
-        simulation = RealEstatePurchaseSimulator()
-        simulation.find_years(LOAN, INTEREST_RATE, ANNUAL_PAYMENT)
-        print(f"\nYear loan = {round(simulation.year, 1)}")
-        simulation.display_loan_interest_statistic()
-    elif MODE == 2:
-        print(f"Surface rate price is {monetary_value(SURFACE_RATE_PRICE)}€/m²")
-        print(f"Contribution is {CONTRIBUTION}€")
-        print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
-        print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
-        print(f"Years of loan is {LOAN_YEARS}")
+            print(f"\nSurface = {simulation.newton_result_model}")
+            print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
+            simulation.display_loan_interest_statistic()
+        case "Contribution":
+            print(f"House price {monetary_value(HOUSE_PRICE)}€")
+            print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
+            print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
+            print(f"Years of loan is {LOAN_YEARS}")
 
-        simulation = RealEstatePurchaseSimulator()
-        simulation.find_house_size(SURFACE_RATE_PRICE, NOTARY_COST_RATE, CONTRIBUTION,
-                                   ANNUAL_PAYMENT, INTEREST_RATE, LOAN_YEARS)
+            simulation = RealEstatePurchaseSimulator()
+            simulation.find_contribution(HOUSE_PRICE, NOTARY_COST_RATE, ANNUAL_PAYMENT, INTEREST_RATE, LOAN_YEARS)
 
-        print(f"\nSurface = {simulation.newton_result_model}")
-        simulation.display_loan_interest_statistic()
-    elif MODE == 3:
-        print(f"House price {monetary_value(HOUSE_PRICE)}€")
-        print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
-        print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
-        print(f"Years of loan is {LOAN_YEARS}")
+            print(f"\nContribution = {simulation.newton_result_model}€")
+            print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
+            simulation.display_loan_interest_statistic()
+        case "Monthly payment":
+            print(f"House price is {monetary_value(HOUSE_PRICE)}€")
+            print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
+            print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
+            print(f"Loan is {monetary_value(LOAN)}€")
+            print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
+            print(f"Years of loan is {LOAN_YEARS}")
 
-        simulation = RealEstatePurchaseSimulator()
-        simulation.find_contribution(HOUSE_PRICE, NOTARY_COST_RATE, ANNUAL_PAYMENT, INTEREST_RATE, LOAN_YEARS)
+            simulation = RealEstatePurchaseSimulator()
+            simulation.find_monthly_payment(LOAN, INTEREST_RATE, LOAN_YEARS)
 
-        print(f"\nContribution = {simulation.newton_result_model}€")
-        simulation.display_loan_interest_statistic()
-    elif MODE == 4:
-        print(f"House price is {monetary_value(HOUSE_PRICE)}€")
-        print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
-        print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
-        print(f"Loan is {monetary_value(LOAN)}€")
-        print(f"Interest rate is {round(100*INTEREST_RATE, 2)}%")
-        print(f"Years of loan is {LOAN_YEARS}")
+            print(f"\nMonthly payment = {simulation.newton_result_model}€/month")
+            print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
+            simulation.display_loan_interest_statistic()
+        case "Interest rate":
+            print(f"House price is {monetary_value(HOUSE_PRICE)}€")
+            print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
+            print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
+            print(f"Loan is {monetary_value(LOAN)}€")
+            print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
+            print(f"Years of loan is {LOAN_YEARS}")
 
-        simulation = RealEstatePurchaseSimulator()
-        simulation.find_monthly_payment(LOAN, INTEREST_RATE, LOAN_YEARS)
+            simulation = RealEstatePurchaseSimulator()
+            simulation.find_interest_rate(LOAN, ANNUAL_PAYMENT, LOAN_YEARS)
 
-        print(f"\nMonthly payment = {simulation.newton_result_model}€/month")
-        simulation.display_loan_interest_statistic()
-    elif MODE == 5:
-        print(f"House price is {monetary_value(HOUSE_PRICE)}€")
-        print(f"Notary fees is {monetary_value(NOTARY_FEES)}€")
-        print(f"Contribution is {monetary_value(CONTRIBUTION)}€")
-        print(f"Loan is {monetary_value(LOAN)}€")
-        print(f"Monthly payment is {monetary_value(MONTHLY_PAYMENT)}€/month")
-        print(f"Years of loan is {LOAN_YEARS}")
-
-        simulation = RealEstatePurchaseSimulator()
-        simulation.find_interest_rate(LOAN, ANNUAL_PAYMENT, LOAN_YEARS)
-
-        print(f"\nInterest rate = {round(100*simulation.newton_result_model, 3)}%")
-        print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
-        simulation.display_loan_interest_statistic()
+            print(f"\nInterest rate = {round(100*simulation.newton_result_model, 3)}%")
+            print(f"\nCumulated interest = {simulation.interest_payment_cumulated[-1]} €")
+            simulation.display_loan_interest_statistic()
 
 """ Summary of this simulation
-Mode 1: year finder
+Mode "Loan duration":
 Inputs: - loan (house price + notary price - contribution)
         - annual payment
         - interest rate
 Outputs:    - years
             - interest
 
-Mode 2: size finder
+Mode "Surface":
 Inputs: - surface rate price (related to localisation)
         - contribution
         - monthly payment
@@ -421,7 +412,7 @@ Outputs:    - house size
             - loan
             - interest
 
-Mode 3: contribution finder
+Mode "Contribution":
 Inputs: - house price
         - monthly payment
         - interest rate
@@ -430,19 +421,17 @@ Outputs:    - contribution
             - loan
             - interest
 
-Mode 4: monthly payment finder
+Mode "Monthly payment":
 Inputs: - loan
         - interest rate
         - years
 Outputs:    - monthly payment
             - interest
 
-Mode 5: interest rate finder
+Mode "Interest rate":
 Inputs: - loan
         - annual payment
         - years
 Outputs:    - interest rate
             - interest
-            
-
 """
