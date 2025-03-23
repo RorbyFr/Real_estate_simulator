@@ -1,0 +1,19 @@
+{
+    "files": [
+        "common.py",
+        "display_statistics.py",
+        "error_pop_up.py",
+        "gui.py",
+        "resources.qrc",
+        "real_estate_page.py",
+        "real_estate_simulator.py",
+        "resources/en.ts",
+        "resources/error_pop_up.ui",
+        "resources/fr.ts",
+        "resources/main_window.ui",
+        "resources/real_estate_finder.ui",
+        "resources/settings_pop_up.ui",
+        "settings_pop_up.py",
+        "simulator_interface.py"
+    ]
+}

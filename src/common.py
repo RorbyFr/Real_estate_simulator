@@ -1,17 +1,17 @@
-from PySide6.QtCore import QFile, QTextStream, QSize, Qt, QRect
-from PySide6.QtGui import QIcon, QPixmap, QPainterPath, QRegion, QPainter, QColor, QPen
-from PySide6.QtWidgets import QWidget, QDialog
+from PySide6.QtCore import QFile, QTextStream, QSize, Qt
+from PySide6.QtGui import QIcon, QPixmap, QPainterPath, QPainter, QPen
+from PySide6.QtWidgets import QDialog
 
 import sys
 import os
 
 
 def get_absolute_path_from_relative(relative_path):
-    """ Get absolute path from relative path
+    """Get absolute path from relative path
 
     :params css_file: string relative path from Home project
     """
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.dirname(__file__), relative_path)
 
@@ -43,7 +43,7 @@ def apply_stylesheet(class_name, css_file):
 
 
 def load_scaled_icon_on_widget(widget, img_path, text_under=True, border_width=0, border_height=0):
-    """ Load image and resize it to fit with widget
+    """Load image and resize it to fit with widget
 
     :params widget: QWidget
     :params img_path: string path of image
@@ -57,7 +57,7 @@ def load_scaled_icon_on_widget(widget, img_path, text_under=True, border_width=0
         coefficient_under = 1
         if text_under:
             coefficient_under = 0.70
-        width, height = find_optimal_icon_size(widget_width, int(widget_height*coefficient_under), icon)
+        width, height = find_optimal_icon_size(widget_width, int(widget_height * coefficient_under), icon)
         widget.setIcon(icon)
         widget.setIconSize(QSize(width, height))
     elif hasattr(widget, "setPixmap"):
@@ -86,8 +86,8 @@ def find_optimal_icon_size(target_width, target_height, widget):
         height = widget.height()
 
     # Calcul ratio
-    width_ratio = target_width/width
-    height_ratio = target_height/height
+    width_ratio = target_width / width
+    height_ratio = target_height / height
 
     # Take minimum ratio to fit with at least on one dimension and not cross edge widget
     new_ratio = min(width_ratio, height_ratio)
@@ -100,6 +100,7 @@ def find_optimal_icon_size(target_width, target_height, widget):
 class _RoundedWidget(object):
     """Protected rounded widget class, this should be use as parent class of QWidget class
     (QWidget, QDialog, QMainWindow, ...)"""
+
     def __init__(self, radius, color, border_color, border_width):
         self.radius = radius
         self.color = color
