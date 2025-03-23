@@ -15,8 +15,8 @@ import sys
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     # Key in buttons dictionary
+    BUTTON_INSTANCE = "button instance"
     IMG_KEY = "image path"
-    IDX_KEY = "index page"
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -29,13 +29,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Remove up windows bar
         self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.home_buttons = {
-            self.year_toolButton: {self.IMG_KEY: "year.png", self.IDX_KEY: 1},
-            self.house_size_toolButton: {self.IMG_KEY: "house size.PNG", self.IDX_KEY: 2},
-            self.contribution_toolButton: {self.IMG_KEY: "contribution.PNG", self.IDX_KEY: 3},
-            self.monthly_payment_toolButton: {self.IMG_KEY: "monthly payment.PNG", self.IDX_KEY: 4},
-            self.interest_rate_toolButton: {self.IMG_KEY: "interest rate.PNG", self.IDX_KEY: 5},
-        }
+        self.home_buttons = [
+            {self.BUTTON_INSTANCE: self.year_toolButton, self.IMG_KEY: "year.png"},
+            {self.BUTTON_INSTANCE: self.house_size_toolButton, self.IMG_KEY: "house size.PNG"},
+            {self.BUTTON_INSTANCE: self.contribution_toolButton, self.IMG_KEY: "contribution.PNG"},
+            {self.BUTTON_INSTANCE: self.monthly_payment_toolButton, self.IMG_KEY: "monthly payment.PNG"},
+            {self.BUTTON_INSTANCE: self.interest_rate_toolButton, self.IMG_KEY: "interest rate.PNG"},
+        ]
 
         # Back to main page button
         common.load_scaled_icon_on_widget(self.back_pushButton, os.path.join(common.RESOURCES_PATH, "back.png"), text_under=False)
@@ -92,12 +92,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __create_home_buttons(self):
         """Put icon on home buttons"""
-        for button, data_button in self.home_buttons.items():
+        for index_button, button_dict in enumerate(self.home_buttons):
+            button = button_dict[self.BUTTON_INSTANCE]
+            image_button = button_dict[self.IMG_KEY]
             # Put icon on button with text under
-            common.load_scaled_icon_on_widget(button, os.path.join(common.RESOURCES_PATH, data_button[self.IMG_KEY]), text_under=True)
+            common.load_scaled_icon_on_widget(button, os.path.join(common.RESOURCES_PATH, image_button), text_under=True)
             button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             # Connect changing page
-            button.clicked.connect(lambda checked, index=data_button[self.IDX_KEY]: self.go_to_page(index))
+            button.clicked.connect(lambda checked, index=index_button+1: self.go_to_page(index))
             # Qt bug need define here cursor instead of css
             button.setCursor(Qt.PointingHandCursor)
 
@@ -153,7 +155,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.back_pushButton.setVisible(True)
             # Display button name in title, real estate page title are smaller than main menu title
-            current_button = list(self.home_buttons.items())[index - 1][0]
+            current_button = self.home_buttons[index-1][self.BUTTON_INSTANCE]
             self.title.setText(current_button.text())
             font_size = 30
         # Display text in Arial black
@@ -204,7 +206,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.title.setText(self.main_menu_title)
         # Real estate page
         else:
-            current_button = list(self.home_buttons.items())[self.current_index - 1][0]
+            current_button = self.home_buttons[self.current_index-1][self.BUTTON_INSTANCE]
             self.title.setText(current_button.text())
 
     @Slot()
@@ -216,8 +218,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.monthly_payment_finder_page.simulator_thread.quit()
         self.interest_rate_finder_page.simulator_thread.quit()
         sys.exit()
-
-
 
 
 if __name__ == "__main__":

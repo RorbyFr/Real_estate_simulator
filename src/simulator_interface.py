@@ -1,9 +1,8 @@
 from PySide6.QtCore import QObject, Signal, Slot, QCoreApplication
-
-from real_estate_simulator import RealEstatePurchaseSimulator, RealEstateError, MAX_CONTRIBUTION, MAX_MONTHLY_PAYMENT
-import common
-
 from math import floor, ceil
+
+import real_estate_simulator as RES
+import common
 
 
 class SimulatorInterface(QObject):
@@ -21,23 +20,23 @@ class SimulatorInterface(QObject):
 
     def __init__(self):
         super(SimulatorInterface, self).__init__()
-        self.simulator = RealEstatePurchaseSimulator()
-        self.simu_func = "func"
+        self.simulator = RES.RealEstatePurchaseSimulator()
+        self.mode = "mode"
         self.simu_result = "result"
         self.unit_result = "unit"
-        self.simulation_dict = {"year": {self.simu_func: self.simulator.find_years,
+        self.simulation_dict = {"year": {self.mode: RES.SimulationMode.LOAN_DURATION,
                                          self.simu_result: "year",
                                          self.unit_result: "years"},
-                                "house size": {self.simu_func: self.simulator.find_house_size,
+                                "house size": {self.mode: RES.SimulationMode.HOUSE_SURFACE,
                                                self.simu_result: "surface",
                                                self.unit_result: "m²"},
-                                "contribution": {self.simu_func: self.simulator.find_contribution,
+                                "contribution": {self.mode: RES.SimulationMode.CONTRIBUTION,
                                                  self.simu_result: "contribution",
                                                  self.unit_result: "€"},
-                                "monthly payment": {self.simu_func: self.simulator.find_monthly_payment,
+                                "monthly payment": {self.mode: RES.SimulationMode.MONTHLY_PAYMENT,
                                                     self.simu_result: "monthly_payment",
                                                     self.unit_result: "€/months"},
-                                "interest rate": {self.simu_func: self.simulator.find_interest_rate,
+                                "interest rate": {self.mode: RES.SimulationMode.INTEREST_RATE,
                                                   self.simu_result: "interest_rate",
                                                   self.unit_result: "%"},
                                 }
@@ -69,8 +68,9 @@ class SimulatorInterface(QObject):
         self.last_target = target
         # Launch simulation
         try:
-            self.simulation_dict[target][self.simu_func](*simulation_parameters)
-        except RealEstateError:
+            RES.MODE = self.simulation_dict[target][self.mode]
+            self.simulator.run(*simulation_parameters)
+        except RES.RealEstateError:
             self.last_error = self.MODEL_ERROR
             # Convert maximum interest rate in %
             if target == "interest rate":
@@ -128,9 +128,9 @@ class SimulatorInterface(QObject):
         maximum_value = self.simulator.maximum_value
         if "€" in self.simulation_dict[self.last_target][self.unit_result] and error_pop_up_still_opened:
             if self.last_target == "contribution":
-                maximum_value = int(MAX_CONTRIBUTION*common.DICT_MONEY_CONVERSION[common.MONEY_UNIT])
+                maximum_value = int(RES.MAX_CONTRIBUTION*common.DICT_MONEY_CONVERSION[common.MONEY_UNIT])
             elif self.last_target == "monthly payment":
-                maximum_value = int(MAX_MONTHLY_PAYMENT * common.DICT_MONEY_CONVERSION[common.MONEY_UNIT])
+                maximum_value = int(RES.MAX_MONTHLY_PAYMENT * common.DICT_MONEY_CONVERSION[common.MONEY_UNIT])
         translated_target = self.get_translated_last_target()
         return QCoreApplication.translate("Simulator interface", "Model can not converge, maximum value {} is {} {}")\
             .format(translated_target, maximum_value, self.simulation_dict[self.last_target][self.unit_result])\
@@ -157,8 +157,3 @@ class SimulatorInterface(QObject):
     @Slot()
     def refresh_model(self):
         self.simulator.refresh_model(common.DICT_MONEY_CONVERSION[common.MONEY_UNIT])
-        self.simulation_dict["year"][self.simu_func] = self.simulator.find_years
-        self.simulation_dict["house size"][self.simu_func] = self.simulator.find_house_size
-        self.simulation_dict["contribution"][self.simu_func] = self.simulator.find_contribution
-        self.simulation_dict["monthly payment"][self.simu_func] = self.simulator.find_monthly_payment
-        self.simulation_dict["interest rate"][self.simu_func] = self.simulator.find_interest_rate
