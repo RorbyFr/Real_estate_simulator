@@ -1,7 +1,6 @@
 import os
 import subprocess
 
-
 command = [
     f"{os.environ['PROJECT_DIR']}\\venv\\Scripts\\nuitka.cmd",
     "--standalone",
@@ -14,7 +13,7 @@ command = [
     "--windows-console-mode=disable",
     "--output-filename=real_estate_simulator",
     "--windows-icon-from-ico=resources/real_estate.ico",
-    f"{os.environ['MAIN_FILE']}"
+    f"{os.environ['MAIN_FILE']}",
 ]
 
 try:

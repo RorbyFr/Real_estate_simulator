@@ -1,13 +1,12 @@
-from PySide6.QtCore import Slot, Qt
-
-from resources.error_pop_up import Ui_Dialog
-import common
-
 import os
+
+from PySide6.QtCore import Qt, Slot
+
+import common
+from resources.error_pop_up import Ui_Dialog
 
 
 class ErrorPopUp(Ui_Dialog, common.RoundedQdialog):
-
     def __init__(self):
         Ui_Dialog.__init__(self)
         common.RoundedQdialog.__init__(self, radius=30, color=Qt.white, border_color=Qt.black, border_width=8)
@@ -45,4 +44,3 @@ class ErrorPopUp(Ui_Dialog, common.RoundedQdialog):
     def display_pop_up(self, message):
         self.error_label.setText(message)
         self.show()
-

@@ -1,10 +1,10 @@
-import subprocess
 import os
+import subprocess
 
 
 def main():
-    exclude_folders = ["venv", "production", "bin"]     # list of folder to exclude in translation search
-    list_to_translate = []      # list of python file to find translation in
+    exclude_folders = ["venv", "production", "bin"]  # list of folder to exclude in translation search
+    list_to_translate = []  # list of python file to find translation in
     list_ts_file = ["fr.ts", "en.ts"]
 
     for root, dirs, files in os.walk(os.environ["PROJECT_DIR"]):

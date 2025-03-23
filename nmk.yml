@@ -1,0 +1,37 @@
+refs:
+    - pip://nmk-python!plugin.yml
+    - pip://nmk-vscode!plugin.yml
+
+config:
+    pythonPackage: "Real-Estate-Simulator"
+    pythonPackageRequirements:
+        - PySide6
+        - matplotlib
+        - Nuitka==2.6
+    pythonProjectFileItems:
+        tool:
+            ruff:
+                extend-exclude:
+                    - src/resources/ui_*.py
+
+tasks:
+    gui.build:
+        description: Build the GUI
+        emoji: ":green_square:.:hammer:"
+        deps:
+            - gui.translate
+        appendToDeps:
+            - build
+    gui.translate:
+        description: Translate the GUI
+        emoji: ":green_square:.:globe_with_meridians:"
+    gui.clean:
+        description: Clean the GUI
+        emoji: ":green_square:.:broom:"
+        appendToDeps:
+            - clean
+    gui.compile:
+        description: Compile the GUI
+        emoji: ":green_square:.:package:"
+        appendToDeps:
+            - package

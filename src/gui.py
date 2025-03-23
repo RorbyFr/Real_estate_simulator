@@ -1,25 +1,23 @@
-
-from PySide6.QtWidgets import QMainWindow, QApplication
-from PySide6.QtCore import QSize, Qt, QTranslator, QLocale, Slot, QEvent
-from PySide6.QtGui import QIcon, QFont
-
-from resources.main_window import Ui_MainWindow
-from settings_pop_up import SettingsPopUp
-from real_estate_page import YearFinderPage, HouseSizeFinderPage, ContributionFinderPage, MonthlyPaymentFinderPage, InterestRateFinderPage
-import common
-
 import os
 import sys
 
+from PySide6.QtCore import QSize, Qt, QTranslator, Slot
+from PySide6.QtGui import QFont, QIcon
+from PySide6.QtWidgets import QApplication, QMainWindow
+
+import common
+from real_estate_page import ContributionFinderPage, HouseSizeFinderPage, InterestRateFinderPage, MonthlyPaymentFinderPage, YearFinderPage
+from resources.main_window import Ui_MainWindow
+from settings_pop_up import SettingsPopUp
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-
     # Key in buttons dictionary
     IMG_KEY = "image path"
     IDX_KEY = "index page"
 
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
         # Apply UI file
         self.setupUi(self)
 
@@ -102,7 +100,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             button.setCursor(Qt.PointingHandCursor)
 
     def load_scaled_icon_on_button(self, widget, img_path, text_under=True):
-        """ Load image and resize it to fit with widget
+        """Load image and resize it to fit with widget
 
         :params widget: QWidget
         :params img_path: string path of image
@@ -114,7 +112,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         coefficient_under = 1
         if text_under:
             coefficient_under = 0.70
-        width, height = self.find_optimal_icon_size(widget_width, int(widget_height*coefficient_under), icon)
+        width, height = self.find_optimal_icon_size(widget_width, int(widget_height * coefficient_under), icon)
         widget.setIcon(icon)
         widget.setIconSize(QSize(width, height))
 
@@ -130,8 +128,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         height = icon.availableSizes()[0].height()
 
         # Calcul ratio
-        width_ratio = target_width/width
-        height_ratio = target_height/height
+        width_ratio = target_width / width
+        height_ratio = target_height / height
 
         # Take minimum ratio to fit with at least on one dimension and not cross edge widget
         new_ratio = min(width_ratio, height_ratio)
@@ -166,8 +164,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.give_current_page_to_real_estate_page(index)
 
     def give_current_page_to_real_estate_page(self, index):
-        list_page = [self, self.year_finder_page, self.house_size_finder_page, self.contribution_finder_page,
-                     self.monthly_payment_finder_page, self.interest_rate_finder_page]
+        list_page = [
+            self,
+            self.year_finder_page,
+            self.house_size_finder_page,
+            self.contribution_finder_page,
+            self.monthly_payment_finder_page,
+            self.interest_rate_finder_page,
+        ]
         for page in list_page:
             page.current_page = list_page[index]
 
@@ -218,15 +222,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sys.exit()
 
 
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # translator = QTranslator()
-    # locale = QLocale.system().name()  # Ex: "fr_FR"
-    # qm_file_path = os.path.join(RESOURCES_PATH, f"{locale}.qm")
-    # if translator.load(qm_file_path):
-    #     app.installTranslator(translator)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
